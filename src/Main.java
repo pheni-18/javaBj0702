@@ -1,9 +1,58 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.HashMap;
 import java.util.Collections;
 
 public class Main {
+    private static List<Card> createDeck() {
+        List<Card> deck = new ArrayList<>();
+        for (int number = 1; number <= 13; number++) {
+            for (int m = 1; m <= 4; m++) {
+                String mark;
+                if (m == 1) {
+                    mark = "spade";
+                }
+                else if (m == 2) {
+                    mark = "heart";
+                }
+                else if (m == 3) {
+                    mark = "diamond";
+                }
+                else {
+                    mark = "club";
+                }
+
+                Card card = new Card(mark, number);
+                deck.add(card);
+            }
+        }
+
+        return deck;
+    };
+
+    private static String judgeWinner(int playerTotal, int dealerTotal) {
+        String winner = "";
+        if (playerTotal > 21 && dealerTotal > 21) {
+            winner = "no winner";
+        }
+        else if (playerTotal > 21) {
+            winner = "dealer";
+        }
+        else if (dealerTotal > 21) {
+            winner = "player";
+        }
+        else if (playerTotal == dealerTotal) {
+            winner = "no winner";
+        }
+        else if (playerTotal > dealerTotal) {
+            winner = "player";
+        }
+        else {
+            winner = "dealer";
+        }
+
+        return winner;
+    }
+
     public static void main(String[] args) throws Exception {
         // ３枚のカードを合計して２１により近い人が勝ち
         // ２１を超えていたら負け
@@ -15,96 +64,37 @@ public class Main {
         // １は１または１１として扱う
 
         // デッキ作る
-        List<HashMap<String,Integer>> deck = new ArrayList<>();
-        for (int i = 1; i <= 13; i++) {
-            for (int j = 1; j <= 4; j++) {
-                HashMap<String,Integer> card = new HashMap<>();
-                card.put("mark", j);
-                card.put("number", i);
-                deck.add(card);
-            }
-        }
+        List<Card> deck = createDeck();
 
         // シャッフル
         Collections.shuffle(deck);
 
-        // プレイヤーハンド作成
-        List<HashMap<String,Integer>> playerHand = new ArrayList<>();
+        // プレイヤー作成
+        Person player = new Person();
         for (int i=0; i < 3; i++) {
-            HashMap<String,Integer> c = deck.remove(deck.size() - 1);
-            playerHand.add(c);
+            Card c = deck.remove(deck.size() - 1);
+            player.hand.add(c);
         }
-
-        // ディーラーハンド作成
-        List<HashMap<String,Integer>> dealerHand = new ArrayList<>();
+        
+        // ディーラー作成
+        Person dealer = new Person();
         for (int i=0; i < 3; i++) {
-            HashMap<String,Integer> c = deck.remove(deck.size() - 1);
-            dealerHand.add(c);
+            Card c = deck.remove(deck.size() - 1);
+            dealer.hand.add(c);
         }
 
-        int playerTotal = 0;
-        boolean hasOne = false;
-        for (int i=0; i < 3; i++) {
-            HashMap<String,Integer> c = playerHand.get(i);
-            int n = c.get("number");
-            if (n >= 11) {
-                n = 10;
-            }
-            if (n == 1) {
-                hasOne = true;
-            }
-            playerTotal += n;
-        }
-
-        if (hasOne && playerTotal <= 11) {
-            playerTotal += 10;
-        }
-
-        int dealerTotal = 0;
-        hasOne = false;
-        for (int i=0; i < 3; i++) {
-            HashMap<String,Integer> c = dealerHand.get(i);
-            int n = c.get("number");
-            if (n >= 11) {
-                n = 10;
-            }
-            if (n == 1) {
-                hasOne = true;
-            }
-            dealerTotal += n;
-        }
-
-        if (hasOne && dealerTotal <= 11) {
-            dealerTotal += 10;
-        }
+        int playerTotal = player.calcTotal();
+        int dealerTotal = dealer.calcTotal();
 
         // 勝敗判定
-        String winner = "";
-        if (playerTotal > 21 && dealerTotal > 21) {
-            winner = "";
-        }
-        else if (playerTotal > 21) {
-            winner = "dealer";
-        }
-        else if (dealerTotal > 21) {
-            winner = "player";
-        }
-        else if (playerTotal == dealerTotal) {
-            winner = "";
-        }
-        else if (playerTotal > dealerTotal) {
-            winner = "player";
-        }
-        else {
-            winner = "dealer";
-        }
+        String winner = judgeWinner(playerTotal, dealerTotal);
 
         System.out.println("player:");
-        playerHand.stream().forEach(m -> {System.out.println(m);});
+        player.showHand();
         System.out.println(playerTotal);
 
         System.out.println("dealer:");
-        dealerHand.stream().forEach(m -> {System.out.println(m);});
+        dealer.showHand();
         System.out.println(dealerTotal);
 
         System.out.println("winner");
