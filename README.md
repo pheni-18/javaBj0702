@@ -1,3 +1,10 @@
+# javaBj0702
+
+## Version
+openjdk 11.0.15 2022-04-19 LTS
+OpenJDK Runtime Environment Zulu11.56+19-CA (build 11.0.15+10-LTS)
+OpenJDK 64-Bit Server VM Zulu11.56+19-CA (build 11.0.15+10-LTS, mixed mode)
+
 ## Getting Started
 
 Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
